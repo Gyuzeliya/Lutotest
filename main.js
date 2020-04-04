@@ -30,6 +30,7 @@ const requestData = async ({ id, param }) => {
   // should return [null, {v: 1}, {v: 4}, null] or Error (may return array (null | {v: number})[])
   let url = '//t.syshub.ru';
   let array = await serverApiRequest(`${url}/query/data/${id}/param/${param}`);
+  let result = [];
 
   // after complete request if *not* Error call
   if(typeof array !== 'undefined') {
@@ -38,10 +39,11 @@ const requestData = async ({ id, param }) => {
       id: id,
       param: param
     });
-  }
 
-  // магия, описать
-  return array2; // return [1, 4]
+    // фильтрация массива, извлечение значения v
+    result = array.filter(item => item && item.hasOwnProperty('v')).map(item => item.v);
+  }
+  return result;
 };
 
 // app proto
