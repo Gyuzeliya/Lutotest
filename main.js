@@ -9,8 +9,15 @@ const serverApiRequest = url => {
 };
 
 // Можно выполнить по аналогии с serverApiRequest(), а можно лучше, см. подсказку ниже
-const sendAnalytics = (a, b) => {
+const sendAnalytics = (url, data) => {
   /*sendBeacon maybe*/
+  let result = navigator.sendBeacon(url, JSON.stringify(data));
+  if (result) {
+    console.log('Добавлено в очередь');
+  } else {
+    // TODO: Реализовать поддержку IE, Opera Mini
+    // TODO: Изучить https://volument.com/blog/sendbeacon-is-broken
+  }
 };
 
 /* Нужно:
@@ -25,11 +32,13 @@ const requestData = async ({ id, param }) => {
   let array = await serverApiRequest(`${url}/query/data/${id}/param/${param}`);
 
   // after complete request if *not* Error call
-  sendAnalytics("/requestDone", {
-    type: "data",
-    id: id,
-    param: param
-  });
+  if(typeof array !== 'undefined') {
+    sendAnalytics(`${url}/requestDone`, {
+      type: "data",
+      id: id,
+      param: param
+    });
+  }
 
   // магия, описать
   return array2; // return [1, 4]
