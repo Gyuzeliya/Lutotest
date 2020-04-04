@@ -6,7 +6,8 @@ const serverApiRequest = url => {
 };
 
 const sendAnalytics = (url, data) => {
-  let result = navigator.sendBeacon(url, JSON.stringify(data));
+  // отправка и оптимизация данных
+  let result = navigator.sendBeacon(url, new Blob([JSON.stringify(data)], {type: 'text/plain'}));
   if (!result) {
     // TODO: Реализовать поддержку IE, Opera Mini
     // TODO: Изучить https://volument.com/blog/sendbeacon-is-broken
