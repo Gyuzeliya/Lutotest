@@ -1,8 +1,11 @@
 // Эта функция по идее должна быть импортирована,
 // но упрощено и нужно её простейшим образом реализовать
-const serverApiRequest = a => {
+const serverApiRequest = url => {
   /*simulate request*/
-  return fetch("//t.syshub.ru" + a);
+  return fetch(url)
+    // TODO: Добавить в ответ сервера на 404 заголовок Access-Control-Allow-Origin
+    .then(res => res.ok ? res.json() : Promise.reject(Error(res.statusText)))
+    .catch(e => console.log(e))
 };
 
 // Можно выполнить по аналогии с serverApiRequest(), а можно лучше, см. подсказку ниже
@@ -16,9 +19,10 @@ const sendAnalytics = (a, b) => {
     3 Подсветить места, где ТЗ недостаточно
     4 Подсветить места, вероятно проблемные
 */
-const requestData = (/*{ id, param }*/) => {
+const requestData = async ({ id, param }) => {
   // should return [null, {v: 1}, {v: 4}, null] or Error (may return array (null | {v: number})[])
-  var array = serverApiRequest("/query/data/" + id + "/param/" + param);
+  let url = '//t.syshub.ru';
+  let array = await serverApiRequest(`${url}/query/data/${id}/param/${param}`);
 
   // after complete request if *not* Error call
   sendAnalytics("/requestDone", {
